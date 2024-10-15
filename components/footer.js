@@ -3,7 +3,7 @@ import { Fontisto } from "@expo/vector-icons";
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import React, {useEffect, useState} from "react";
 import { MainHome } from '../views/mainHome';
-import { News } from '../views/news';
+import { Pro } from '../views/pro';
 import { Match } from '../views/match';
 import { MyPage } from '../views/mypage';
 
@@ -15,8 +15,8 @@ export function Footer(){
         switch (selectedScreen) {
           case 'home':
             return <MainHome />;
-          case 'news':
-            return <News />;
+          case 'pro':
+            return <Pro />;
           case 'match':
             return <Match />;
           case 'mypage':
@@ -36,9 +36,9 @@ export function Footer(){
                     <Fontisto name="home" size={20} color={selectedScreen === 'home' ? '#FFD73C' : 'gray'} style={styles.icon}></Fontisto>
                     <Text style={[styles.text, { color: selectedScreen=== 'home' ? '#FFD73C' : 'gray' }]}>홈</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.bar} onPress={() => setSelectedScreen('news')}>
-                    <FontAwesome6 name="basketball" size={20} color={selectedScreen === 'news' ? '#FFD73C' : 'gray'} style={styles.icon}></FontAwesome6>
-                    <Text style={[styles.text, { color: selectedScreen=== 'news' ? '#FFD73C' : 'gray' }]}>소식</Text>
+                <TouchableOpacity style={styles.bar} onPress={() => setSelectedScreen('pro')}>
+                    <FontAwesome6 name="basketball" size={20} color={selectedScreen === 'pro' ? '#FFD73C' : 'gray'} style={styles.icon}></FontAwesome6>
+                    <Text style={[styles.text, { color: selectedScreen=== 'pro' ? '#FFD73C' : 'gray' }]}>소식</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.bar} onPress={() => setSelectedScreen('match')}>
                     <Fontisto name="search" size={20} color={selectedScreen === 'match' ? '#FFD73C' : 'gray'} style={styles.icon}></Fontisto>

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Image, View, Dimensions, ActivityIndicator, Text, TouchableOpacity, Button } from 'react-native';
+import { StyleSheet, Image, View, Dimensions, ActivityIndicator, Text, TouchableOpacity, Button, ScrollView } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import axios from 'axios';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import { MatchCard } from './cards/matchCard';
 
 const { width:CATEGORY_SCREEN_WIDTH } = Dimensions.get("window");
 const GOOGLE_PLACES_API_KEY = 'AIzaSyCiP64B8lfsCRHNDa94JRJJ0JI1qd8kXuQ';
@@ -12,27 +13,50 @@ const GOOGLE_PLACES_API_KEY = 'AIzaSyCiP64B8lfsCRHNDa94JRJJ0JI1qd8kXuQ';
 export function MainImage(){
     const [basketballCourts, setBasketballCourts] = useState([]);
     const [selectedCourt, setSelectedCourt] = useState(null); // 선택된 농구장 정보 저장
+    
     const [imageUrl, setImageUrl] = useState(null); //농구장 이미지 정보 저장
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [markerClicked, setMarkerClicked] = useState(false);
     const [errorMsg, setErrorMsg] = useState(null);
     const [loading, setLoading] = useState(false);
+    const arrayJson = [
+        {
+            match_id: 1,
+            match_title: "3대3 초보분들 모집해요",
+            match_body: "제목그대로 3VS3 하실분 구합니다. 적당히 즐기면서 뛰실분, 너무 모나지 않으신분들 모집해요.",
+            time_title: "19:00",
+            member_id: 1,
+            member_name: "휴직맨",
+            class_id: 1,
+            class_name: "초보",
+            vs_id: 1,
+            vs_name: "3 VS 3",
+            join_id: 1,
+            join_name: "참여인원 : 5"
+        },
+        {
+            match_id: 2,
+            match_title: "5대5 엘리트 체육인들만 오세요",
+            match_body: "다칩니다",
+            time_title: "20:00",
+            member_id: 2,
+            member_name: "휴직맨",
+            class_id: 2,
+            class_name: "중수",
+            vs_id: 2,
+            vs_name: "5 VS 5",
+            join_id: 2,
+            join_name: "참여인원 : 8"
+        },
+    ];
+
     const [region, setRegion] = useState({
         latitude: 37.7749,
         longitude: -122.4194,
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421,
       });
-
-    // Agenda에 필요한 형식의 데이터 준비
-    const loadItems = () => {
-        const newItems = {};
-        newItems[todayString] = [
-        { name: '오늘 일정', height: 80 },
-        ];
-        setItems(newItems);
-    };
 
     const showDatePicker = () => {
         setDatePickerVisibility(true);
@@ -124,7 +148,7 @@ export function MainImage(){
     }, []);
 
     useEffect(() => {
-        console.log(selectedCourt);
+        //console.log(selectedCourt);
     }, [selectedCourt]);
     
     // region이 변경될 때 fetchBasketballCourts 호출
@@ -135,6 +159,7 @@ export function MainImage(){
     }, [region]);
     return(
         <View style={styles.Advertising}>
+            
         {loading ? (
             <View style={styles.loadingOverlay}>
                 <ActivityIndicator size="large" color="white" />
@@ -184,14 +209,11 @@ export function MainImage(){
                     {/* <Text style={{ fontSize: 12, fontWeight: 'bold', flex: 1 }}>{selectedCourt.vicinity}</Text> */}
                 </View>    
             </View>
-            <View style={{ flex: 1, top: 0, flexDirection: "row" }}>
-                <View style={{backgroundColor: "#1478CD", padding: 10, borderRadius: 5, marginRight: 5}}>
+            <View style={{ flex: 1, top: 0, flexDirection: "column" }}>
+                <View style={{backgroundColor: "#1478CD", padding: 10, borderRadius: 2}}>
                     <TouchableOpacity onPress={showDatePicker}>
-                        <Text style={{fontSize: 12, color: "white"}}>{selectedDate.toLocaleDateString('ko-KR',{year: 'numeric'})}</Text>
                         <Text style={styles.dateText}>
-                            {selectedDate.toLocaleDateString('ko-KR',{month: 'long'})}
-                            {" " + selectedDate.toLocaleDateString('ko-KR',{day: 'numeric'})}
-                            {"(" + selectedDate.toLocaleDateString('ko-KR',{weekday: 'short'}) + ")"}
+                            {selectedDate.toLocaleDateString('ko-KR',{year: 'numeric', month: 'long', day: 'numeric',weekday:'short'})}
                         </Text>
                     </TouchableOpacity>
                     <DateTimePickerModal
@@ -201,17 +223,20 @@ export function MainImage(){
                         onConfirm={handleConfirm}
                         onCancel={hideDatePicker}
                     />
-                </View >
-                <View style={{backgroundColor: "white", padding: 10, flex: 1, borderRadius: 5}}>
-                    <View style={{flexDirection: "row", marginBottom: 10, flex: 1}}>
-                        <Text style={{}}>[19:00] 3대3 초보분들 모집해요.</Text>
-                    </View>
-                    <View style={{flexDirection: "row", justifyContent: "space-between"}}>
-                        <Text style={styles.textAttention}>초보</Text>
-                        <Text style={styles.textAttention}>3 VS 3</Text>
-                        <Text style={styles.textAttention}>참여인원 : 5</Text>
-                    </View>
-                </View>    
+                </View>
+                <ScrollView 
+                    horizontal 
+                    pagingEnabled
+                    showsHorizontalScrollIndicator={false} 
+                    contentContainerStyle={{alignItems: "flex-start"}}
+                >
+                {
+                    arrayJson.map((string, index) => (
+                        <MatchCard key={string.match_id} message={string}></MatchCard>
+                    ))
+                }
+                </ScrollView>
+                
             </View>    
         </View>
       )}
@@ -265,5 +290,9 @@ const styles = StyleSheet.create({
         borderRadius: 5, 
         paddingLeft: 10, 
         paddingRight: 10
-    }
+    },
+    btnText: {
+        fontSize: 20,
+        fontWeight: "600",
+    },
 });
