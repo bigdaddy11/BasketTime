@@ -19,11 +19,11 @@ export function Pro(){
     return(
         <ScrollView contentContainerStyle={styles.BodyMain}>
             <View style={{justifyContent: "space-around", flexDirection: "row", padding: 5, backgroundColor: "white", height: 40, alignItems: "center", borderBottomColor: "whitesmoke", borderBottomWidth: 1}}>
-                <TouchableOpacity onPress={() => setSelectedScreen('nba')}>
+                <TouchableOpacity onPress={() => setSelectedScreen('nba')} style={{flex: 1, alignItems: "center"}}>
                     {/* <MaterialIcons name="location-on" size={24} color={selectedScreen === 'location' ? '#FFD73C' : 'gray'} /> */}
                     <Text style={{color: selectedScreen === 'nba' ? '#FFD73C' : 'gray'}}>NBA</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => setSelectedScreen('kbl')}>
+                <TouchableOpacity onPress={() => setSelectedScreen('kbl')} style={{flex: 1, alignItems: "center"}}>
                     {/* <Feather name="list" size={24} color={selectedScreen === 'list' ? '#FFD73C' : 'gray'} /> */}
                     <Text style={{color: selectedScreen === 'kbl' ? '#FFD73C' : 'gray'}}>KBL</Text>
                 </TouchableOpacity>

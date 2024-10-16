@@ -38,7 +38,7 @@ export function Footer(){
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.bar} onPress={() => setSelectedScreen('pro')}>
                     <FontAwesome6 name="basketball" size={20} color={selectedScreen === 'pro' ? '#FFD73C' : 'gray'} style={styles.icon}></FontAwesome6>
-                    <Text style={[styles.text, { color: selectedScreen=== 'pro' ? '#FFD73C' : 'gray' }]}>소식</Text>
+                    <Text style={[styles.text, { color: selectedScreen=== 'pro' ? '#FFD73C' : 'gray' }]}>프로농구</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.bar} onPress={() => setSelectedScreen('match')}>
                     <Fontisto name="search" size={20} color={selectedScreen === 'match' ? '#FFD73C' : 'gray'} style={styles.icon}></Fontisto>

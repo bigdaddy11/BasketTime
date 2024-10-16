@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 
 export function NbaTeam(){
     const [standings, setStandings] = useState([]);
+    const [selectedScreen, setSelectedScreen] = useState('East'); // 현재 선택된 화면 상태
+    const [expandedTeam, setExpandedTeam] = useState(null);  // 어떤 팀이 펼쳐져 있는지 추적하는 상태
+    const [players, setPlayers] = useState({});  // 각 팀의 선수 목록을 저장하는 상태
 
     const logoPath = {
       "Atlanta Hawks": require("../assets/teamlogo/nba/Atlanta Hawks.gif"),
@@ -18,7 +21,6 @@ export function NbaTeam(){
       "Golden State Warriors": require("../assets/teamlogo/nba/Golden State Warriors.gif"),
       "Houston Rockets": require("../assets/teamlogo/nba/Houston Rockets.gif"),
       "Indiana Pacers": require("../assets/teamlogo/nba/Indiana Pacers.gif"),
-      //"LA Clippers": require("../assets/teamlogo/nba/LA Clippers.gif"),
       "Los Angeles Lakers": require("../assets/teamlogo/nba/Los Angeles Lakers.gif"),
       "Memphis Grizzlies": require("../assets/teamlogo/nba/Memphis Grizzlies.gif"),
       "Miami Heat": require("../assets/teamlogo/nba/Miami Heat.gif"),
@@ -36,21 +38,10 @@ export function NbaTeam(){
       "Toronto Raptors": require("../assets/teamlogo/nba/Toronto Raptors.gif"),
       "Utah Jazz": require("../assets/teamlogo/nba/Utah Jazz.gif"),
       "Washington Wizards": require("../assets/teamlogo/nba/Washington Wizards.gif"),
-      //"Chicago Stags": require("../assets/teamlogo/nba/Chicago Stags.gif"),
-      //"St. Louis Bombers": require("../assets/teamlogo/nba/St. Louis Bombers.gif"),
-      //"Cleveland Rebels": require("../assets/teamlogo/nba/Cleveland Rebels.gif"),
-      //"Detroit Falcons": require("../assets/teamlogo/nba/Detroit Falcons.gif"),
-      //"Toronto Huskies": require("../assets/teamlogo/nba/Toronto Huskies.gif"),
-      //"Washington Capitols": require("../assets/teamlogo/nba/Washington Capitols.gif"),
-      //"Providence Steamrollers": require("../assets/teamlogo/nba/Providence Steamrollers.gif"),
-      //"Pittsburgh Ironmen": require("../assets/teamlogo/nba/Pittsburgh Ironmen.gif"),
-      //"Baltimore Bullets": require("../assets/teamlogo/nba/Baltimore Bullets.gif"),
-      //"Indianapolis Jets": require("../assets/teamlogo/nba/Indianapolis Jets.gif"),
-      //"Anderson Packers": require("../assets/teamlogo/nba/Anderson Packers.gif"),
-      //"Waterloo Hawks": require("../assets/teamlogo/nba/Waterloo Hawks.gif"),
-      //"Indianapolis Olympians": require("../assets/teamlogo/nba/Indianapolis Olympians.gif"),
       "Denver Nuggets": require("../assets/teamlogo/nba/Denver Nuggets.gif"),
-      //"Sheboygan Redskins": require("../assets/teamlogo/nba/Sheboygan Redskins.gif"),
+      "LA Clippers" : require("../assets/teamlogo/nba/LA Clippers.gif"),
+      "western": require("../assets/teamlogo/nba/western.png"),
+      "eastern": require("../assets/teamlogo/nba/eastern.png"),
     };
 
     useEffect(() => {
@@ -58,10 +49,6 @@ export function NbaTeam(){
           try {
             const response = await axios.get('http://192.168.0.11:8080/api/teams/nba');
             setStandings(response.data.data); // 데이터가 data 필드에 있다고 가정
-            
-            standings.map((team) => {
-              console.log('"' + team.full_name + '": require("../assets/teamlogo/nba/' + team.full_name + '.gif"),');
-            });
           } catch (error) {
             console.error(error);
           }
@@ -72,17 +59,30 @@ export function NbaTeam(){
     
       return (
         <ScrollView style={styles.container}>
-            {standings.map((item) => (
-                <View key={item.id} style={styles.standingsItem}>
-                  <Image 
-                    source={logoPath[item.full_name]} 
-                    style={styles.logo}
-                  />
-                  <Text>{item.full_name}</Text>
-                  {/* <Text>{item.abbreviation}</Text>
-                  <Text>{item.conference}</Text> */}
-                </View>
-            ))}
+            <View style={styles.conference}>
+              <TouchableOpacity style={styles.conferenceText} onPress={() => setSelectedScreen('East')}>
+                <Image source={logoPath["eastern"]} style={styles.smalllogo}/>
+                <Text style={{color: selectedScreen === 'East' ? '#FFD73C' : 'gray'}}>동부 컨퍼런스</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.conferenceText} onPress={() => setSelectedScreen('West')}>
+                <Image source={logoPath["western"]} style={styles.smalllogo}/>
+                <Text style={{color: selectedScreen === 'West' ? '#FFD73C' : 'gray'}}>서부 컨퍼런스</Text>
+              </TouchableOpacity>
+            </View>
+            {standings.map((item) => 
+              item.conference === selectedScreen ? 
+              (
+                <TouchableOpacity key={item.id} style={{flex: 1, justifyContent: "center"}}>
+                  <View key={item.id} style={styles.standingsItem}>
+                    <Image 
+                      source={logoPath[item.full_name]} 
+                      style={styles.logo}
+                    />
+                    <Text style={{fontSize: 16}}>{item.full_name}</Text>
+                  </View>
+                </TouchableOpacity>
+              ) : null
+            )}
         </ScrollView>
       );
 };
@@ -93,8 +93,22 @@ const styles = StyleSheet.create({
       //padding: 20,
       backgroundColor: 'white',
     },
+    conference: {
+      flexDirection: "row",
+      justifyContent: "flex-start",
+      padding: 10,
+      borderBottomColor: "whitesmoke", 
+      borderBottomWidth: 1
+    },
+    conferenceText: {
+      //marginRight: 0,
+      flexDirection: "row",
+      padding: 5,
+      //borderRightColor: "whitesmoke", 
+      //borderRightWidth: 1
+    },
     standingsItem: {
-      padding: 20,
+      padding: 10,
       //marginBottom: 15,
       flexDirection: "row",
       alignItems: "center",
@@ -102,14 +116,26 @@ const styles = StyleSheet.create({
       borderBottomWidth: 1
     },
     logo: {
-        width: 40,
-        height: 40,
+        width: 90,
+        height: 60,
         resizeMode: 'cover',
         borderRadius: 30,
         marginRight: 10,
-        
-        //marginRight: 2,
-        //marginLeft: 20
-    }
+    },
+    smalllogo: {
+        width: 20,
+        height: 20,
+        resizeMode: 'cover',
+        borderRadius: 30,
+        marginRight: 3,
+    },
+    playersList: {
+      paddingLeft: 20,
+      paddingBottom: 10,
+    },
+    playerName: {
+      fontSize: 16,
+      paddingVertical: 2,
+    },
   });
   
